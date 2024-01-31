@@ -1,29 +1,7 @@
-﻿@*<main>
-        <section class="row" aria-labelledby="aspnetTitle">
-            <h1 id="aspnetTitle">ASP.NET</h1>
-            <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS, and JavaScript.</p>
-            <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-        </section>
-        <div class="row">
-            <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-                <h2 id="gettingStartedTitle">Getting started</h2>
-                <p>ASP.NET Web API is a framework that makes it easy to build HTTP services that reach
-                a broad range of clients, including browsers and mobile devices. ASP.NET Web API
-                is an ideal platform for building RESTful applications on the .NET Framework.</p>
-                <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301870">Learn more &raquo;</a></p>
-            </section>
-            <section class="col-md-4" aria-labelledby="librariesTitle">
-                <h2 id="librariesTitle">Get more libraries</h2>
-                <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-                <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301871">Learn more &raquo;</a></p>
-            </section>
-            <section class="col-md-4" aria-labelledby="hostingTitle">
-                <h2 id="hostingTitle">Web Hosting</h2>
-                <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-                <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301872">Learn more &raquo;</a></p>
-            </section>>
-        </div>
-    </main>*@
+﻿@{
+    bool EsAdmin = Session["EsAdmin"] as bool? ?? false;
+    bool CargarListado = Session["CargarListado"] as bool? ?? false;
+}
 <style>
     .oculto {
         display: none;
@@ -34,25 +12,30 @@
     }
 </style>
 <main>
-    <table id="table-cliente" class="table">
-        <thead>
-            <tr>
-                <th>Id Cliente</th>
-                <th>Tipo Identificación</th>
-                <th>Identificación</th>
-                <th>Nombre</th>
-                <th>Apellidos</th>
-                <th colspan="3">Acciones</th>
-            </tr>
-        </thead>
-        <tbody id="contenedor-tbody">
-        </tbody>
-    </table>
+    @if (EsAdmin || CargarListado)
+    {
+        <table id="table-cliente" class="table">
+            <thead>
+                <tr>
+                    <th>Id Cliente</th>
+                    <th>Tipo Identificación</th>
+                    <th>Identificación</th>
+                    <th>Nombre</th>
+                    <th>Apellidos</th>
+                    @if (EsAdmin)
+                    {
+                        <th colspan="3">Acciones</th>
+                    }
+                </tr>
+            </thead>
+            <tbody id="contenedor-tbody">
+            </tbody>
+        </table>
+    }
 </main>
 
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
 
 <script>
     $(document).ready(function () {
@@ -61,7 +44,6 @@
     function inicializar() {
         CargarClientes();
         EditarCliente();
-        //Grid();
     }
 
     function CargarClientes() {
@@ -79,6 +61,7 @@
         });
     }
     function PintarCliente(data) {
+        var esAdmin = @Html.Raw(Json.Encode(EsAdmin));
         var tr = "";
         data.forEach(function (reg) {
             tr = "<tr>"
@@ -87,9 +70,11 @@
             tr += "<td><span class='td" + reg.IdCliente + " visible'>" + reg.NumeroIdentificacion + "</span><input id='NumeroIdentificacion" + reg.IdCliente + "' class='Cliente" + reg.IdCliente + " oculto' type='text' value='" + reg.NumeroIdentificacion + "' /></td>";
             tr += "<td><span class='td" + reg.IdCliente + " visible'>" + reg.Nombre + "</span><input id='Nombre" + reg.IdCliente + "' class='Cliente" + reg.IdCliente + " oculto' type='text' value='" + reg.Nombre + "' /></td>";
             tr += "<td><span class='td" + reg.IdCliente + " visible'>" + reg.Apellido + "</span><input id='Apellido" + reg.IdCliente + "' class='Cliente" + reg.IdCliente + " oculto' type='text' value='" + reg.Apellido + "' /></td>";
-            tr += "<td><button data-modo='0' data-id='" + reg.IdCliente + "' class='cls-editar'>Editar</button></td>";
-            tr += "<td><button class='cls-agregar'>Agregar</button></td>";
-            tr += "<td><button class='cls-eliminar'>Eliminar</button></td>";
+            if (esAdmin) {
+                tr += "<td><button data-modo='0' data-id='" + reg.IdCliente + "' class='cls-editar'>Editar</button></td>";
+                tr += "<td><button class='cls-agregar'>Agregar</button></td>";
+                tr += "<td><button class='cls-eliminar'>Eliminar</button></td>";
+            }
             tr += "</tr>";
             $("#contenedor-tbody").append(tr);
         });

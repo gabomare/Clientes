@@ -27,7 +27,6 @@ namespace Data
                 {
                     conn.Open();
 
-                    // Utilizando Dapper para ejecutar el procedimiento almacenado y mapear los resultados a la lista de clientes
                     clientes = conn.Query<Cliente>("GetClientes", commandType: CommandType.StoredProcedure).ToList();
 
                 }
@@ -61,7 +60,6 @@ namespace Data
                         Telefono = cliente.Telefono
                     };
 
-                    // Utilizando Dapper para ejecutar el procedimiento almacenado y mapear los resultados a la lista de clientes
                     var result = conn.QueryFirstOrDefault<int>("ActualizarCliente", parameters, commandType: CommandType.StoredProcedure);
                     ok = result == 1;
                 }
@@ -73,6 +71,36 @@ namespace Data
             }
 
             return ok;
+        }
+
+        public async Task<RespuestaSesion> ValidarSesion(string Usuario, string Clave)
+        {
+            RespuestaSesion sesion = new RespuestaSesion();
+            bool ok = false;
+            try
+            {
+
+                using (var conn = new SqlConnection(cadenaBD))
+                {
+                    conn.Open();
+
+                    var parameters = new
+                    {
+                        Usuario = Usuario,
+                        Clave = Clave,
+                    };
+
+                    sesion = conn.QueryFirstOrDefault<RespuestaSesion>("ValidarSesion", parameters, commandType: CommandType.StoredProcedure);
+                    
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return sesion;
         }
     }
 }

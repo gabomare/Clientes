@@ -32,9 +32,13 @@ namespace Api.Controllers
             return Ok(service.PutClientes(_cliente));
         }
 
-        // PUT: api/Cliente/5
-        public void Put(int id, [FromBody]string value)
+        [HttpPost]
+        [Route("Cliente/Sesion")]
+        public IHttpActionResult Sesion([FromBody]Sesion sesion)
         {
+            string cadena = ConfigurationManager.ConnectionStrings["DbClientes"].ConnectionString;
+            Service service = new Service(cadena);
+            return Ok(service.ValidarSesion(sesion.Usuario, sesion.Clave));
         }
 
         // DELETE: api/Cliente/5
