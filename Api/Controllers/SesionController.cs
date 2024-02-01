@@ -19,10 +19,11 @@ namespace Api.Controllers
             return Json(new { mensaje = "¡Llamada exitosa!" });
         }
         [HttpPost]
-        public ActionResult Logueado(bool EsAdmin)
+        public ActionResult Logueado(bool EsAdmin, string Empleado)
         {
             Session["UsuarioLogueado"] = true;
             Session["EsAdmin"] = EsAdmin;
+            Session["Empleado"]= Empleado;
             return Json(new { mensaje = "¡Llamada exitosa!" });
         }
     }

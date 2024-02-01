@@ -10,6 +10,19 @@
     .visible {
         display: block;
     }
+
+    .cls-editar, .cls-agregar, .cls-eliminar {
+        border-radius: 5px;
+        background: white;
+        border: 1px solid gray;
+        transform: rotate(90deg);
+    }
+    .cls-eliminar {
+        border-radius: 5px;
+        background: white;
+        border: 1px solid gray;
+        transform: rotate(0deg);
+    }
 </style>
 <main>
     @if (EsAdmin || CargarListado)
@@ -17,14 +30,14 @@
         <table id="table-cliente" class="table">
             <thead>
                 <tr>
-                    <th>Id Cliente</th>
-                    <th>Tipo Identificación</th>
-                    <th>Identificación</th>
-                    <th>Nombre</th>
-                    <th>Apellidos</th>
+                    <th style="width:7%;display:none;">Id Cliente</th>
+                    <th style="width:15%">Tipo Identificación</th>
+                    <th style="width:10%">Identificación</th>
+                    <th style="width:30%">Nombre</th>
+                    <th style="width:30%">Apellidos</th>
                     @if (EsAdmin)
                     {
-                        <th colspan="3">Acciones</th>
+                        <th style="width:8%;text-align:center;" colspan="3">Acciones</th>
                     }
                 </tr>
             </thead>
@@ -63,17 +76,18 @@
     function PintarCliente(data) {
         var esAdmin = @Html.Raw(Json.Encode(EsAdmin));
         var tr = "";
+        $("#contenedor-tbody").empty();
         data.forEach(function (reg) {
             tr = "<tr>"
-            tr += "<td><span class='td" + reg.IdCliente + " visible'>" + reg.IdCliente + "</span><input id='IdCliente" + reg.IdCliente + "' class='Cliente" + reg.IdCliente + " oculto' type='text' value='" + reg.IdCliente + "' readonly /></td>";
-            tr += "<td><span class='td" + reg.IdCliente + " visible'>" + reg.TipoIdentificacion + "</span><input id='TipoIdentificacion" + reg.IdCliente + "' class='Cliente" + reg.IdCliente + " oculto' type='text' value='" + reg.TipoIdentificacion + "' /></td>";
-            tr += "<td><span class='td" + reg.IdCliente + " visible'>" + reg.NumeroIdentificacion + "</span><input id='NumeroIdentificacion" + reg.IdCliente + "' class='Cliente" + reg.IdCliente + " oculto' type='text' value='" + reg.NumeroIdentificacion + "' /></td>";
-            tr += "<td><span class='td" + reg.IdCliente + " visible'>" + reg.Nombre + "</span><input id='Nombre" + reg.IdCliente + "' class='Cliente" + reg.IdCliente + " oculto' type='text' value='" + reg.Nombre + "' /></td>";
-            tr += "<td><span class='td" + reg.IdCliente + " visible'>" + reg.Apellido + "</span><input id='Apellido" + reg.IdCliente + "' class='Cliente" + reg.IdCliente + " oculto' type='text' value='" + reg.Apellido + "' /></td>";
+            tr += "<td style='display:none;'><span class='td" + reg.IdCliente + " visible'>" + reg.IdCliente + "</span><input id='IdCliente" + reg.IdCliente + "' class='Cliente" + reg.IdCliente + " oculto form-control' type='text' value='" + reg.IdCliente + "' readonly /></td>";
+            tr += "<td><span class='td" + reg.IdCliente + " visible'>" + reg.TipoIdentificacion + "</span><input id='TipoIdentificacion" + reg.IdCliente + "' class='Cliente" + reg.IdCliente + " oculto form-control' type='text' value='" + reg.TipoIdentificacion + "' /></td>";
+            tr += "<td><span class='td" + reg.IdCliente + " visible'>" + reg.NumeroIdentificacion + "</span><input id='NumeroIdentificacion" + reg.IdCliente + "' class='Cliente" + reg.IdCliente + " oculto form-control' type='text' value='" + reg.NumeroIdentificacion + "' /></td>";
+            tr += "<td><span class='td" + reg.IdCliente + " visible'>" + reg.Nombre + "</span><input id='Nombre" + reg.IdCliente + "' class='Cliente" + reg.IdCliente + " oculto form-control' type='text' value='" + reg.Nombre + "' /></td>";
+            tr += "<td><span class='td" + reg.IdCliente + " visible'>" + reg.Apellido + "</span><input id='Apellido" + reg.IdCliente + "' class='Cliente" + reg.IdCliente + " oculto form-control' type='text' value='" + reg.Apellido + "' /></td>";
             if (esAdmin) {
-                tr += "<td><button data-modo='0' data-id='" + reg.IdCliente + "' class='cls-editar'>Editar</button></td>";
-                tr += "<td><button class='cls-agregar'>Agregar</button></td>";
-                tr += "<td><button class='cls-eliminar'>Eliminar</button></td>";
+                tr += "<td><button class='cls-agregar'>&#43;</button></td>";
+                tr += "<td><button data-modo='0' data-id='" + reg.IdCliente + "' class='cls-editar'>&#9998;</button></td>";
+                tr += "<td><button class='cls-eliminar'>&#10007;</button></td>";
             }
             tr += "</tr>";
             $("#contenedor-tbody").append(tr);
@@ -81,14 +95,16 @@
     }
     function EditarCliente() {
         $("#contenedor-tbody").on("click", ".cls-editar", function () {
-            debugger;
             if ($(this).data("modo") == '0') {
                 $(this).data("modo", 1);
                 $(".Cliente" + $(this).data("id")).removeClass("oculto").addClass("visible");
                 $(".td" + $(this).data("id")).removeClass("visible").addClass("oculto");
-                $(this).text("Confirmar");
+                $(this).html("&#10003;");
+                $(this).css("transform", "rotate(0deg)");
             } else {
-                debugger;
+                $(this).data("modo", 0);
+                $(this).html("&#9998;");//
+                $(this).css("transform", "rotate(90deg)");
                 var _IdCliente = $("#IdCliente" + $(this).data("id")).val();
                 var _TipoIdentificacion = $("#TipoIdentificacion" + $(this).data("id")).val();
                 var _NumeroIdentificacion = $("#NumeroIdentificacion" + $(this).data("id")).val();
@@ -99,7 +115,6 @@
                 $(".Cliente" + $(this).data("id")).removeClass("visible").addClass("oculto");
                 $(".td" + $(this).data("id")).removeClass("oculto").addClass("visible");
                 ActualizarCliente(_IdCliente, _TipoIdentificacion, _NumeroIdentificacion, _Nombre, _Apellido, _Telefono);
-                $(this).text("Editar");
             }
 
         })
@@ -121,11 +136,9 @@
             contentType: 'application/json',
             data: JSON.stringify(clienteObj),
             success: function (response) {
-                debugger;
-                console.log(response);
+                CargarClientes();
             },
             error: function (error) {
-                debugger;
                 console.error('Error en la llamada AJAX:', error);
             }
         });

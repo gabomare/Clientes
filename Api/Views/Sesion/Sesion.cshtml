@@ -10,16 +10,16 @@
             <h1 class="h3 mb-3 fw-normal">Inicio de Sesión</h1>
 
             <div class="form-floating">
-                <input type="email" value="juanito@gmail.com" class="form-control" id="text-usuario" placeholder="name@example.com">
+                <input type="email" value="gabomare@gmail.com" class="form-control" id="text-usuario" placeholder="name@example.com">
                 <label for="floatingInput">dirección de email</label>
             </div>
             <div class="form-floating">
-                <input type="password" value="ju4n170" class="form-control" id="text-clave" placeholder="Password">
+                <input type="password" value="c3l3573&7" class="form-control" id="text-clave" placeholder="Password">
                 <label for="floatingPassword">Password</label>
             </div>
             <br />
             <button id="button-iniciar" class="btn btn-primary w-100 py-2" type="button">Iniciar</button>
-            <label id="mensaje" style="color:red;">El usuario y/o contraseña no son válidos.</label>
+            <label id="mensaje" style="color:red;"></label>
         </form>
     </div>
     <div class="col-md-4"></div>
@@ -40,7 +40,7 @@
         });
     }
     function ValidarSesion() {
-        debugger;
+
         if (!ValidarDatos()) {
             return;
         }
@@ -54,9 +54,8 @@
             contentType: 'application/json',
             data: JSON.stringify(SesionObj),
             success: function (response) {
-                debugger;
                 if (response.Result.Valido == 1) {
-                    Index(response.Result.EsAdmin);
+                    Index(response.Result.EsAdmin, response.Result.Empleado);
                 } else {
                     $("#mensaje").text("Los datos del inicio de sesión son incorrectos. Por favor verifique.");
                     NoLogueado();
@@ -92,11 +91,11 @@
             $("#mensaje").text("Ocurrión un error al intentar iniciar sesión.");
         }
     }
-    function Index(_EsAdmin) {
+    function Index(_EsAdmin, _Empleado) {
         $.ajax({
             type: 'POST',
             url: '/Sesion/Logueado',
-            data: { EsAdmin: _EsAdmin },
+            data: { EsAdmin: _EsAdmin, Empleado: _Empleado },
             success: function (response) {
                 window.location.href = '/Home/Index';
             },
